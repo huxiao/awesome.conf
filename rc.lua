@@ -325,7 +325,8 @@ globalkeys = awful.util.table.join(
     awful.key({ altkey }, "r", function() menubar.show() end),
 
     -- User programs
-    awful.key({ "Control" }, "F12", function () awful.util.spawn("sleep 1") awful.util.spawn("xset dpms force off") end),
+    awful.key({ "Control" }, "F11", function () awful.util.spawn("pavucontrol") end),
+    awful.key({ "Control" }, "F12", function () awful.util.spawn("sh -c 'sleep 1 && xset dpms force off'") end),
     awful.key({ "Control" }, "Escape", function () awful.util.spawn("xfce4-terminal --drop-down") end),
     awful.key({ modkey }, "s", function () awful.util.spawn("firefox") end),
     awful.key({ modkey }, "e", function () awful.util.spawn("nautilus") end)
@@ -423,6 +424,8 @@ awful.rules.rules = {
     { rule = { class = "Smplayer" },
       properties = { floating = true } },
     { rule = { class = "Xfce4-terminal", role = "xfce4-terminal-dropdown" },
+      properties = { floating = true } },
+    { rule = { class = "Firefox", instance = "Firebug" },
       properties = { floating = true } },
     { rule = { class = "Goldendict" },
       properties = { floating = true } },
@@ -589,7 +592,7 @@ wp_timer:connect_signal("timeout", function()
 end)
  
 -- initial start when rc.lua is first run
-wp_timer:start()
+--wp_timer:start()
 
 
 -- Include local file
