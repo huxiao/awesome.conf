@@ -1,6 +1,7 @@
 ---------------------------
 -- Aouhix awesome theme --
 ---------------------------
+local gears = require("gears")
 
 theme = {}
 
@@ -73,7 +74,7 @@ theme.titlebar_maximized_button_focus_inactive  = "/usr/share/awesome/themes/def
 theme.titlebar_maximized_button_normal_active = "/usr/share/awesome/themes/default/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active  = "/usr/share/awesome/themes/default/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = "/usr/share/awesome/themes/default/background.png"
+--theme.wallpaper = "/usr/share/awesome/themes/default/background.png"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh = "/usr/share/awesome/themes/default/layouts/fairhw.png"
@@ -94,6 +95,63 @@ theme.awesome_icon = "/usr/share/awesome/icons/awesome16.png"
 -- Define the icon theme for application icons. If not set then the icons 
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
 theme.icon_theme = nil
+
+
+-- {{{ autochange wallpaper
+
+-- set parameters
+wp_path    = "/home/huxiao/Pictures/wallpapers/"
+wp_timeout = 300
+
+-- scan directory, and optionally filter outputs
+function scandir(directory, filter)
+    local i, t, popen = 0, {}, io.popen
+    if not filter then
+        filter = function(s) return true end
+    end
+    print(filter)
+    for filename in popen('ls -a "'..directory..'"'):lines() do
+        if filter(filename) then
+            i = i + 1
+            t[i] = filename
+        end
+    end
+    return t
+end
+
+wp_filter = function(s) return string.match(s,"%.png$") or string.match(s,"%.jpg$") end
+wp_files = scandir(wp_path, wp_filter)
+
+wp_index = math.random( 1, #wp_files)
+-- set wallpaper to current index for all screens
+for s = 1, screen.count() do
+gears.wallpaper.maximized(wp_path .. wp_files[wp_index], s, true)
+end
+ 
+-- setup the timer
+wp_timer = timer { timeout = wp_timeout }
+wp_timer:connect_signal("timeout", function()
+  -- stop the timer (we don't need multiple instances running at the same time)
+  wp_timer:stop()
+  -- get next random index
+  wp_index = math.random( 1, #wp_files)
+ 
+  -- set wallpaper to current index for all screens
+  for s = 1, screen.count() do
+    print ("wp_index:", wp_index, "/", #wp_files)
+    print ("wp_files[wp_index]:", wp_files[wp_index])
+    print(wp_path .. wp_files[wp_index])
+    gears.wallpaper.maximized(wp_path .. wp_files[wp_index], s, true)
+  end
+  --restart the timer
+  wp_timer.timeout = wp_timeout
+  wp_timer:start()
+end)
+ 
+-- initial start when rc.lua is first run
+wp_timer:start()
+
+---}}}
 
 return theme
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
