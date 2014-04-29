@@ -1,0 +1,12 @@
+local awful = require("awful")
+
+-- 添加开机启动项
+run_once("synergys")
+
+-- 添加全局快捷键
+globalkeys = awful.util.table.join(globalkeys,
+    awful.key({ modkey, "Control" }, "a", function () awful.util.spawn("sh -c 'emulator -noaudio @avd0'") end)
+)
+
+root.keys(globalkeys)
+
