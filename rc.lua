@@ -530,6 +530,8 @@ function run_once(prg,arg_string,pname,screen)
     end
 end
 
+--xcompmgr应随rc.lua的重装而重启，否则菜单栏和窗口渲染出错
+awful.util.spawn_with_shell("sh -c 'killall xcompmgr && xcompmgr -cCfF'")
 --run_once("xscreensaver","-no-splash")
 --run_once("pidgin",nil,nil,2)
 --run_once("wicd-client",nil,"/usr/bin/python2 -O /usr/share/wicd/gtk/wicd-client.py")
